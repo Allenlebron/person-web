@@ -1,0 +1,31 @@
+{
+  "name": "Panzhiwei's Blog",
+  "description": "Panzhiwei 的个人博客，用于沉淀技术实践、产品思考和长期笔记。",
+  "url": "https://person-web.myzwilpan.workers.dev",
+  "authorName": "panzhiwei",
+  "authorEmail": "panzhiwei@kospet.com",
+  "authorBio": "记录技术实践、产品思考和长期可复用的知识。",
+  "locales": ["en", "zh"],
+  "primaryLanguage": "zh",
+  "i18n": {
+    "name": {
+      "zh": "潘志伟的个人博客"
+    },
+    "description": {
+      "zh": "Panzhiwei 的个人博客，用于沉淀技术实践、产品思考和长期笔记。"
+    },
+    "authorBio": {
+      "zh": "记录技术实践、产品思考和长期可复用的知识。"
+    }
+  },
+  "i18nRuntime": "paraglide-js",
+  "themePreset": "maker",
+  "layoutPreset": "shelf",
+  "commentsEnabled": true,
+  "commentsRequireApproval": true,
+  "commentAutoBlockEnabled": true,
+  "commentBlockedKeywords": ["博彩", "赌博", "色情", "诈骗", "辱骂", "violence", "scam", "spam"],
+  "emailSendingEnabled": false,
+  "emailVerificationEnabled": false,
+  "githubActionsEnabled": true
+}
