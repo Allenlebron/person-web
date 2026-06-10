@@ -6,6 +6,7 @@ import {
   localizeTag,
   localizePost,
   localizeSiteSettings,
+  updateSiteSettingsLocalization,
 } from "../index";
 import type { Tag, Post, SiteSettings } from "../types";
 
@@ -215,5 +216,64 @@ describe("localizeSiteSettings", () => {
     const result = localizeSiteSettings(settings, "zh");
     expect(result.url).toBe("https://example.com");
     expect(result.authorName).toBe("Author");
+  });
+});
+
+describe("updateSiteSettingsLocalization", () => {
+  const settings: SiteSettings = {
+    name: "My Blog",
+    description: "A blog about tech.",
+    url: "https://example.com",
+    authorName: "Author",
+    authorBio: "Writer and coder.",
+    avatarUrl: "/avatar.jpg",
+    defaultOgImage: "/og.jpg",
+    socialLinks: [],
+    navigation: [],
+    rssEnabled: true,
+    commentsEnabled: true,
+    commentsRequireApproval: true,
+    commentAutoBlockEnabled: false,
+    commentBlockedKeywords: [],
+    aiCommentModerationEnabled: false,
+    aiCommentModerationRules: "",
+    emailVerificationEnabled: false,
+    emailNotificationsEnabled: false,
+    manualEmailBroadcastsEnabled: false,
+    indexingEnabled: true,
+    themePreset: "maker",
+    layoutPreset: "shelf",
+    locales: ["en", "zh"],
+    primaryLanguage: "en",
+    i18n: {
+      name: { zh: "旧博客名" },
+      description: { zh: "旧描述" },
+      authorBio: { zh: "旧简介" },
+    },
+  };
+
+  it("updates the current locale without removing other translations", () => {
+    const i18n = updateSiteSettingsLocalization(settings, "zh", {
+      name: "新博客名",
+      description: "新描述",
+      authorBio: "新简介",
+    });
+
+    expect(i18n).toEqual({
+      name: { zh: "新博客名" },
+      description: { zh: "新描述" },
+      authorBio: { zh: "新简介" },
+    });
+  });
+
+  it("keeps the current localized value when a field is blank", () => {
+    const localized = localizeSiteSettings(settings, "zh");
+    const i18n = updateSiteSettingsLocalization(localized, "zh", {
+      name: " ",
+      description: "",
+      authorBio: "\n",
+    });
+
+    expect(i18n).toEqual(settings.i18n);
   });
 });

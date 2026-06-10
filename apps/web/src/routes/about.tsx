@@ -10,20 +10,24 @@ import { getCurrentLocale } from "#/lib/i18n";
 
 export const Route = createFileRoute("/about")({
   loader: () => $getAboutPageData(),
-  head: () => {
+  head: ({ loaderData }) => {
     const locale = getCurrentLocale();
+    const siteSettings = loaderData
+      ? localizeSiteSettings(loaderData.siteSettings, locale)
+      : undefined;
+    const authorName = siteSettings?.authorName || (locale === "zh" ? "作者" : "Author");
 
     return {
       meta: [
         {
-          title: locale === "zh" ? "关于 01MVP 和 Jackie" : "About 01MVP and Jackie",
+          title:
+            locale === "zh"
+              ? `关于 ${authorName} | ${siteSettings?.name ?? "博客"}`
+              : `About ${authorName} | ${siteSettings?.name ?? "Blog"}`,
         },
         {
           name: "description",
-          content:
-            locale === "zh"
-              ? "了解 01MVP 的 AI 产品实战方法，以及 MakerJackie 的项目背景。"
-              : "Learn about the 01MVP practical AI product method and MakerJackie's background.",
+          content: siteSettings?.authorBio || siteSettings?.description,
         },
       ],
     };
@@ -74,14 +78,16 @@ function AboutPage() {
 
             <aside className="border border-border bg-muted/35 p-5">
               <img
-                src="/jackie-avatar.jpg"
-                alt="MakerJackie"
+                src={siteSettings.avatarUrl}
+                alt={siteSettings.authorName}
                 className="aspect-square w-full object-cover"
               />
               <div className="mt-5">
-                <p className="text-sm font-semibold text-link uppercase">MakerJackie</p>
-                <p className="mt-2 text-2xl font-semibold">{copy.profileTitle}</p>
-                <p className="mt-3 text-sm leading-6 text-muted-foreground">{copy.profileBody}</p>
+                <p className="text-sm font-semibold text-link uppercase">{copy.profileLabel}</p>
+                <p className="mt-2 text-2xl font-semibold">{siteSettings.authorName}</p>
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                  {siteSettings.authorBio}
+                </p>
               </div>
             </aside>
           </div>
@@ -161,8 +167,7 @@ function getAboutCopy(locale: ReturnType<typeof getCurrentLocale>) {
         "01MVP 是 Jackie 持续整理的 AI 产品实战手册。它关注从选择问题、搭建第一版、上线验证，到根据反馈继续迭代的完整路径。",
       primaryAction: "开始阅读手册",
       secondaryAction: "查看作品集",
-      profileTitle: "独立开发者，前 AI 算法工程师",
-      profileBody: "Jackie 是周周黑客松社区发起人，也长期记录 AI 创作、产品实验和可复用模板。",
+      profileLabel: "作者",
       whyEyebrow: "方法",
       whyTitle: "这套手册强调什么",
       principles: [
@@ -209,9 +214,7 @@ function getAboutCopy(locale: ReturnType<typeof getCurrentLocale>) {
       "01MVP is Jackie’s practical AI product handbook. It focuses on choosing a real problem, building the first version, launching, collecting feedback, and deciding what to do next.",
     primaryAction: "Start reading",
     secondaryAction: "View portfolio",
-    profileTitle: "Independent developer and former AI algorithm engineer",
-    profileBody:
-      "Jackie founded Hackathon Weekly and keeps publishing AI creation notes, product experiments, and reusable templates.",
+    profileLabel: "Author",
     whyEyebrow: "Method",
     whyTitle: "What this handbook emphasizes",
     principles: [

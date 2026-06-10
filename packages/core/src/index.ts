@@ -113,6 +113,28 @@ export function localizeSiteSettings(
   };
 }
 
+export function updateSiteSettingsLocalization(
+  settings: SiteSettings,
+  locale: SupportedLocale,
+  input: Pick<SiteSettings, "name" | "description" | "authorBio">,
+): SiteSettings["i18n"] {
+  return {
+    ...settings.i18n,
+    name: {
+      ...settings.i18n?.name,
+      [locale]: input.name.trim() || settings.name,
+    },
+    description: {
+      ...settings.i18n?.description,
+      [locale]: input.description.trim() || settings.description,
+    },
+    authorBio: {
+      ...settings.i18n?.authorBio,
+      [locale]: input.authorBio.trim() || settings.authorBio,
+    },
+  };
+}
+
 const defaultNavigationLabels: Record<SupportedLocale, Record<string, string>> = {
   en: {
     "/demo": "Demo",

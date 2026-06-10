@@ -1,5 +1,10 @@
 import { SiGithub, SiGoogle } from "@icons-pack/react-simple-icons";
-import { type ApiToken, type ApiTokenScope, type SiteSettings } from "@repo/core";
+import {
+  type ApiToken,
+  type ApiTokenScope,
+  type SiteSettings,
+  updateSiteSettingsLocalization,
+} from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
 import { Label } from "@repo/ui/components/label";
@@ -241,17 +246,25 @@ function AdminSettingsPage() {
   const saveSettings: FormSubmitHandler = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
+    const name = formDataText(formData, "siteName");
+    const description = formDataText(formData, "description");
+    const authorBio = formDataText(formData, "authorBio");
     const response = await fetch("/api/site", {
       method: "PUT",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
-        name: formData.get("siteName"),
+        name,
         url: formData.get("siteUrl"),
-        description: formData.get("description"),
+        description,
         authorName: formData.get("authorName"),
-        authorBio: formData.get("authorBio"),
+        authorBio,
         avatarUrl: formData.get("avatarUrl"),
         defaultOgImage: formData.get("defaultOgImage"),
+        i18n: updateSiteSettingsLocalization(siteSettings, locale, {
+          name,
+          description,
+          authorBio,
+        }),
         socialLinks: parseLinkLines(formData.get("socialLinks")),
         navigation: parseLinkLines(formData.get("navigation")),
         themePreset: formData.get("themePreset"),
@@ -1797,6 +1810,12 @@ function readBoolean(record: Record<string, unknown>, keys: string[]) {
   }
 
   return undefined;
+}
+
+function formDataText(formData: FormData, key: string) {
+  const value = formData.get(key);
+
+  return typeof value === "string" ? value : "";
 }
 
 function parseLinkLines(value: FormDataEntryValue | null): SiteSettings["socialLinks"] {
