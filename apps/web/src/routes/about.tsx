@@ -1,12 +1,13 @@
 import { localizeSiteSettings } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowRightIcon, ExternalLinkIcon, MailIcon, SparklesIcon } from "lucide-react";
+import { ArrowRightIcon, MailIcon, SparklesIcon } from "lucide-react";
 
 import { SiteShell } from "#/components/site-shell";
 import { $getAboutPageData } from "#/lib/cms-server";
-import { getDocsUrl } from "#/lib/docs-i18n";
 import { getCurrentLocale } from "#/lib/i18n";
+
+const contactEmail = "myzwilpan@gmail.com";
 
 export const Route = createFileRoute("/about")({
   loader: () => $getAboutPageData(),
@@ -40,7 +41,6 @@ function AboutPage() {
   const locale = getCurrentLocale();
   const siteSettings = localizeSiteSettings(data.siteSettings, locale);
   const copy = getAboutCopy(locale);
-  const docsHref = getDocsUrl([], locale);
 
   return (
     <SiteShell siteSettings={siteSettings}>
@@ -59,19 +59,19 @@ function AboutPage() {
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Button
-                  render={<a href={docsHref} aria-label={copy.primaryAction} />}
+                  render={<a href="/blog" aria-label={copy.primaryAction} />}
                   nativeButton={false}
                 >
                   {copy.primaryAction}
                   <ArrowRightIcon />
                 </Button>
                 <Button
-                  render={<a href="https://makerjackie.com" aria-label={copy.secondaryAction} />}
+                  render={<a href={`mailto:${contactEmail}`} aria-label={copy.secondaryAction} />}
                   variant="outline"
                   nativeButton={false}
                 >
                   {copy.secondaryAction}
-                  <ExternalLinkIcon />
+                  <MailIcon />
                 </Button>
               </div>
             </div>
@@ -137,18 +137,11 @@ function AboutPage() {
 
             <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-border pt-6">
               <a
-                href="mailto:hi@01mvp.com"
+                href={`mailto:${contactEmail}`}
                 className="inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-link hover:underline"
               >
                 <MailIcon className="size-4" />
-                hi@01mvp.com
-              </a>
-              <a
-                href="https://x.com/makerjackie"
-                className="inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-link hover:underline"
-              >
-                X / Twitter
-                <ExternalLinkIcon className="size-4" />
+                {contactEmail}
               </a>
             </div>
           </div>
@@ -161,98 +154,97 @@ function AboutPage() {
 function getAboutCopy(locale: ReturnType<typeof getCurrentLocale>) {
   if (locale === "zh") {
     return {
-      eyebrow: "关于 01MVP",
-      title: "把模糊想法，做成能上线的小产品。",
+      eyebrow: "关于我",
+      title: "记录实践，也记录长期思考。",
       description:
-        "01MVP 是 Jackie 持续整理的 AI 产品实战手册。它关注从选择问题、搭建第一版、上线验证，到根据反馈继续迭代的完整路径。",
-      primaryAction: "开始阅读手册",
-      secondaryAction: "查看作品集",
+        "这里用于整理我在技术实践、产品思考和持续学习中的经验，把解决过的问题沉淀成可以复用的笔记。",
+      primaryAction: "阅读文章",
+      secondaryAction: "联系我",
       profileLabel: "作者",
-      whyEyebrow: "方法",
-      whyTitle: "这套手册强调什么",
+      whyEyebrow: "写作原则",
+      whyTitle: "我希望留下什么",
       principles: [
         {
-          title: "先做出来",
-          description: "先用一个小项目建立手感，再通过上线后的反馈判断下一步。",
+          title: "来自真实实践",
+          description: "优先记录亲自做过、验证过和排查过的问题，保留可以复现的过程。",
         },
         {
-          title: "少踩坑",
-          description: "优先讲值得先学、能直接上手、能被真实项目验证的工具和方法。",
+          title: "能够长期复用",
+          description: "把零散经验整理成清晰的方法、示例和检查清单，方便以后继续使用。",
         },
         {
-          title: "面向交付",
-          description: "把 Demo 作为阶段检查点，继续推进到发布、反馈和下一轮迭代。",
+          title: "持续更新",
+          description: "随着理解和实践变化持续修正内容，不把一次性的结论当成最终答案。",
         },
       ],
       paths: [
         {
-          eyebrow: "Start",
-          title: "读 01MVP 手册",
-          description: "按从想法到上线的路径建立完整工作流。",
-          href: getDocsUrl([], "zh"),
+          eyebrow: "Writing",
+          title: "阅读最新文章",
+          description: "查看近期整理的技术实践、产品思考和学习笔记。",
+          href: "/blog",
         },
         {
-          eyebrow: "Work",
-          title: "看 MakerJackie 作品",
-          description: "查看 Jackie 做过的产品、公开实验和长期项目。",
-          href: "https://makerjackie.com",
+          eyebrow: "Series",
+          title: "浏览专题专栏",
+          description: "按主题查看持续更新的系列内容。",
+          href: "/series",
         },
         {
-          eyebrow: "Template",
-          title: "回到博客模板",
-          description: "了解这个 Cloudflare 原生博客模板如何部署和维护。",
-          href: "/",
+          eyebrow: "Notes",
+          title: "查看站点文档",
+          description: "了解这个个人站点的写作、发布和维护方式。",
+          href: "/zh/docs",
         },
       ],
     };
   }
 
   return {
-    eyebrow: "About 01MVP",
-    title: "Turning rough ideas into small products that can ship.",
+    eyebrow: "About me",
+    title: "Documenting practice and long-term thinking.",
     description:
-      "01MVP is Jackie’s practical AI product handbook. It focuses on choosing a real problem, building the first version, launching, collecting feedback, and deciding what to do next.",
-    primaryAction: "Start reading",
-    secondaryAction: "View portfolio",
+      "This site collects lessons from technical work, product thinking, and continuous learning, turning solved problems into reusable notes.",
+    primaryAction: "Read articles",
+    secondaryAction: "Contact me",
     profileLabel: "Author",
-    whyEyebrow: "Method",
-    whyTitle: "What this handbook emphasizes",
+    whyEyebrow: "Writing principles",
+    whyTitle: "What I want to preserve",
     principles: [
       {
-        title: "Ship the first version",
+        title: "Grounded in real work",
         description:
-          "Use a small project to build product muscle, then let real feedback guide the next step.",
+          "Prioritize problems I have built, verified, or debugged, with enough detail to reproduce the process.",
       },
       {
-        title: "Avoid the expensive detours",
+        title: "Reusable over time",
         description:
-          "Prioritize tools and methods that are worth learning early and can be used in real projects.",
+          "Turn scattered experience into clear methods, examples, and checklists that remain useful.",
       },
       {
-        title: "Stay close to delivery",
+        title: "Continuously revised",
         description:
-          "Treat the demo as a checkpoint, then move the work toward launch, feedback, and iteration.",
+          "Update conclusions as understanding and practice change instead of treating one answer as final.",
       },
     ],
     paths: [
       {
-        eyebrow: "Start",
-        title: "Read the 01MVP handbook",
-        description: "Follow the path from idea to launch and build a complete working loop.",
-        href: getDocsUrl([], "en"),
+        eyebrow: "Writing",
+        title: "Read the latest articles",
+        description: "Browse recent technical practice, product thinking, and learning notes.",
+        href: "/blog",
       },
       {
-        eyebrow: "Work",
-        title: "View MakerJackie projects",
-        description:
-          "Browse products, public experiments, and long-running projects Jackie has built.",
-        href: "https://makerjackie.com",
+        eyebrow: "Series",
+        title: "Browse series",
+        description: "Explore ongoing writing grouped by topic.",
+        href: "/series",
       },
       {
-        eyebrow: "Template",
-        title: "Return to the blog template",
-        description: "See how this Cloudflare-native blog template is deployed and maintained.",
-        href: "/",
+        eyebrow: "Notes",
+        title: "Read the site docs",
+        description: "See how this personal site is written, published, and maintained.",
+        href: "/docs",
       },
     ],
   };

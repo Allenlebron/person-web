@@ -3553,7 +3553,7 @@ export const back_home = /** @type {((inputs?: Back_HomeInputs, options?: { loca
 /**
 * | output |
 * | --- |
-* | "Articles about the 01MVP blog template, Cloudflare-native storage, Markdown publishing, and automation workflows." |
+* | "Technical practice, product thinking, learning notes, and reusable workflows." |
 *
 * @param {Blog_DescriptionInputs} inputs
 * @param {{ locale?: "en" | "zh" }} options
@@ -4967,7 +4967,7 @@ export const series_title = /** @type {((inputs?: Series_TitleInputs, options?: 
 /**
 * | output |
 * | --- |
-* | "01MVP Blog Template" |
+* | "Personal Blog" |
 *
 * @param {Site_SubtitleInputs} inputs
 * @param {{ locale?: "en" | "zh" }} options

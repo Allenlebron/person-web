@@ -10,6 +10,7 @@ import {
   localizePost,
   localizeSiteSettings,
   type Post,
+  type SiteSettings,
   type SupportedLocale,
 } from "@repo/core";
 import { Button } from "@repo/ui/components/button";
@@ -53,6 +54,7 @@ export const Route = createFileRoute("/")({
 type HomeViewProps = {
   readonly posts: Post[];
   readonly locale: SupportedLocale;
+  readonly siteSettings: SiteSettings;
 };
 
 type FeatureItem = {
@@ -103,7 +105,7 @@ function HomePage() {
   const locale = getCurrentLocale();
   const posts = data.posts.map((post) => localizePost(post, locale)).filter(isReaderFacingPost);
   const siteSettings = localizeSiteSettings(data.siteSettings, locale);
-  const homeProps = { posts, locale };
+  const homeProps = { posts, locale, siteSettings };
 
   return (
     <SiteShell siteSettings={siteSettings}>
@@ -112,7 +114,7 @@ function HomePage() {
   );
 }
 
-function ShelfHome({ posts, locale }: HomeViewProps) {
+function ShelfHome({ posts, locale, siteSettings }: HomeViewProps) {
   const copy = getHomeCopy(locale);
   const aiSetupDocsHref = getDocsUrl(["ai-setup"], locale);
   const obsidianDocsHref = getDocsUrl(["obsidian"], locale);
@@ -354,12 +356,18 @@ function ShelfHome({ posts, locale }: HomeViewProps) {
         </div>
       </section>
 
-      <CreatorSection copy={copy} />
+      <CreatorSection copy={copy} siteSettings={siteSettings} />
     </div>
   );
 }
 
-function CreatorSection({ copy }: { readonly copy: ReturnType<typeof getHomeCopy> }) {
+function CreatorSection({
+  copy,
+  siteSettings,
+}: {
+  readonly copy: ReturnType<typeof getHomeCopy>;
+  readonly siteSettings: SiteSettings;
+}) {
   return (
     <section className="border-b border-border bg-background">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16 xl:px-12">
@@ -367,20 +375,22 @@ function CreatorSection({ copy }: { readonly copy: ReturnType<typeof getHomeCopy
           <div data-home-reveal className="max-w-md">
             <p className="text-sm font-semibold text-link uppercase">{copy.creatorEyebrow}</p>
             <h2 className="mt-3 text-3xl leading-tight font-semibold text-balance">
-              {copy.creatorTitle}
+              {siteSettings.authorName}
             </h2>
-            <p className="mt-4 text-sm leading-7 text-muted-foreground">{copy.creatorBody}</p>
+            <p className="mt-4 text-sm leading-7 text-muted-foreground">{siteSettings.authorBio}</p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Button
-                render={<a href="https://01mvp.com/template" aria-label={copy.creatorPrimaryCta} />}
+                render={<a href="/about" aria-label={copy.creatorPrimaryCta} />}
                 nativeButton={false}
                 className="hover:-translate-y-0.5"
               >
                 {copy.creatorPrimaryCta}
-                <ExternalLinkIcon />
+                <ArrowRightIcon />
               </Button>
               <Button
-                render={<a href="https://makerjackie.com" aria-label={copy.creatorSecondaryCta} />}
+                render={
+                  <a href="mailto:myzwilpan@gmail.com" aria-label={copy.creatorSecondaryCta} />
+                }
                 variant="outline"
                 nativeButton={false}
                 className="hover:-translate-y-0.5"
@@ -396,28 +406,6 @@ function CreatorSection({ copy }: { readonly copy: ReturnType<typeof getHomeCopy
               <CreatorSpotlightCard key={item.href} item={item} index={index} />
             ))}
           </div>
-        </div>
-
-        <div
-          data-home-reveal
-          style={getRevealStyle(210)}
-          className="mt-10 flex flex-col gap-3 border-y border-foreground py-5 text-sm sm:flex-row sm:items-center sm:justify-between"
-        >
-          <p className="font-semibold">
-            {copy.poweredByLabel}{" "}
-            <a href="https://01mvp.com" className="text-link hover:underline">
-              01mvp.com
-            </a>
-          </p>
-          <p className="text-muted-foreground">
-            {copy.creatorCreditLabel}{" "}
-            <a
-              href="https://makerjackie.com"
-              className="font-semibold text-foreground hover:text-link"
-            >
-              Jackie
-            </a>
-          </p>
         </div>
       </div>
     </section>
@@ -453,7 +441,7 @@ function CreatorSpotlightCard({
       <span className="mt-3 block text-sm leading-6 text-muted-foreground">{item.description}</span>
       <span className="mt-5 flex items-center gap-2 text-sm font-semibold text-link">
         {item.cta}
-        <ExternalLinkIcon className="size-4" />
+        <ArrowRightIcon className="size-4" />
       </span>
     </a>
   );
@@ -863,7 +851,7 @@ function getHomeCopy(locale: SupportedLocale) {
       eyebrow: "个人博客内容系统 · Cloudflare 托管 · 自动化部署",
       heroTitle: "搭建你的永久精神家园",
       heroBody:
-        "01mvp-blog-starter 是一套 Cloudflare 原生的个人博客内容系统。后台、评论、图床、RSS 开箱即用，初始化流程可以从配置一路跑到上线。",
+        "这个个人站点运行在 Cloudflare 上，用来持续沉淀技术实践、产品思考和长期笔记。后台、评论、图床与 RSS 已接入完整发布流程。",
       primaryCta: "开始 AI 建站",
       secondaryCta: "查看博客 Demo",
 
@@ -983,13 +971,13 @@ function getHomeCopy(locale: SupportedLocale) {
       skillEyebrow: "自动化初始化",
       skillTitle: "两种方式，把模板交给 AI 跑完整流程。",
       skillBody:
-        "推荐安装 01mvp-blog Skill；不想安装也可以直接复制文档里的 Prompt。AI 负责创建 Cloudflare 资源、写配置、跑迁移和部署，你只在账号、域名和付款确认等环节手动处理。",
+        "可以使用站点内置的自动化指南或部署 Prompt，让 AI 创建 Cloudflare 资源、写配置、跑迁移和部署，只在账号、域名和付款确认等环节手动处理。",
       setupPaths: [
         {
-          title: "安装 01mvp-blog Skill",
+          title: "使用自动化部署指南",
           description:
-            "适合长期使用。后续初始化命令、Cloudflare 资源创建和验收清单都可以跟着 Skill 更新。",
-          cta: "查看安装步骤",
+            "适合长期维护。初始化命令、Cloudflare 资源创建和验收清单都集中记录在文档中。",
+          cta: "查看部署步骤",
           icon: SparklesIcon,
         },
         {
@@ -1009,7 +997,7 @@ function getHomeCopy(locale: SupportedLocale) {
         {
           number: "02",
           title: "Fork 或 clone 模板",
-          description: "使用 01MVP/blog-starter 作为起点，也可以让 AI 创建新的 GitHub 仓库。",
+          description: "使用现有博客代码作为起点，也可以让 AI 创建新的 GitHub 仓库。",
         },
         {
           number: "03",
@@ -1088,38 +1076,32 @@ function getHomeCopy(locale: SupportedLocale) {
       contentTitle: "最新文章",
 
       // ── Creator ──
-      creatorEyebrow: "出品方",
-      creatorTitle: "由 MakerJackie 持续维护。",
-      creatorBody: "这里展示 01MVP 的 AI 建站方法、Jackie 的作品，以及可复用的 TanStack 全栈模板。",
-      creatorPrimaryCta: "查看 TanStack 全栈模板",
-      creatorSecondaryCta: "了解 Jackie",
+      creatorEyebrow: "关于作者",
+      creatorPrimaryCta: "了解我",
+      creatorSecondaryCta: "联系我",
       creatorSpotlights: [
         {
-          title: "Jackie / MakerJackie",
-          description:
-            "独立开发者，前 AI 算法工程师，周周黑客松社区发起人，长期记录 AI 创作、产品实验和可复用模板。",
-          href: "https://makerjackie.com",
-          cta: "查看作品",
+          title: "关于我",
+          description: "了解作者简介、写作原则和这个个人站点长期记录的方向。",
+          href: "/about",
+          cta: "查看介绍",
           icon: UserRoundIcon,
         },
         {
-          title: "01MVP 实战手册",
-          description: "从想法、MVP、上线到迭代，围绕真实交付整理 AI 产品实战方法。",
-          href: "https://01mvp.com",
-          cta: "访问 01MVP",
+          title: "最新文章",
+          description: "阅读近期整理的技术实践、产品思考和长期笔记。",
+          href: "/blog",
+          cta: "阅读文章",
           icon: BookOpenIcon,
         },
         {
-          title: "TanStack 全栈模板",
-          description:
-            "基于 TanStack Start 的全栈产品模板，适合用 AI 快速搭建 SaaS、工具站和可上线应用。",
-          href: "https://01mvp.com/template",
-          cta: "查看模板",
+          title: "站点文档",
+          description: "查看这个个人站点的写作、发布、部署和维护方式。",
+          href: "/zh/docs",
+          cta: "查看文档",
           icon: RocketIcon,
         },
       ] satisfies CreatorSpotlight[],
-      poweredByLabel: "Powered by",
-      creatorCreditLabel: "创作者",
     };
   }
 
@@ -1128,7 +1110,7 @@ function getHomeCopy(locale: SupportedLocale) {
     eyebrow: "Personal blog system · Cloudflare-hosted · automated deploy",
     heroTitle: "Build your permanent home on the internet",
     heroBody:
-      "01mvp-blog-starter is a Cloudflare-native personal blog system. Writing dashboard, comments, image hosting, and RSS ship out of the box, and the setup flow can take it from configuration to live deploy.",
+      "This personal site runs on Cloudflare and preserves technical practice, product thinking, and durable notes. Its publishing workflow includes an admin dashboard, comments, media storage, and RSS.",
     primaryCta: "Start AI setup",
     secondaryCta: "View blog demo",
 
@@ -1253,13 +1235,13 @@ function getHomeCopy(locale: SupportedLocale) {
     skillEyebrow: "Automated setup",
     skillTitle: "Give the template to AI in either of two ways.",
     skillBody:
-      "Install the 01mvp-blog Skill for the best long-term flow, or copy the setup prompt from the docs. AI creates Cloudflare resources, writes config, runs migrations, and deploys; you only handle account, domain, and payment confirmations.",
+      "Use the built-in automation guide or deployment prompt to let AI create Cloudflare resources, write config, run migrations, and deploy while you handle account, domain, and payment confirmations.",
     setupPaths: [
       {
-        title: "Install the 01mvp-blog Skill",
+        title: "Use the automation guide",
         description:
-          "Best for repeated use. Setup commands, Cloudflare provisioning, and verification checks can keep improving with the Skill.",
-        cta: "Read install steps",
+          "Best for long-term maintenance. Setup commands, Cloudflare provisioning, and verification checks stay documented together.",
+        cta: "Read deployment steps",
         icon: SparklesIcon,
       },
       {
@@ -1281,7 +1263,7 @@ function getHomeCopy(locale: SupportedLocale) {
         number: "02",
         title: "Fork or clone the template",
         description:
-          "Start from 01MVP/blog-starter, or let AI create a fresh GitHub repository for your blog.",
+          "Start from the existing blog code, or let AI create a fresh GitHub repository for your blog.",
       },
       {
         number: "03",
@@ -1362,39 +1344,32 @@ function getHomeCopy(locale: SupportedLocale) {
     contentTitle: "Latest posts",
 
     // ── Creator ──
-    creatorEyebrow: "Made by",
-    creatorTitle: "Maintained by MakerJackie.",
-    creatorBody:
-      "Explore 01MVP's AI website workflow, Jackie's projects, and the reusable TanStack full-stack template.",
-    creatorPrimaryCta: "View TanStack template",
-    creatorSecondaryCta: "Meet Jackie",
+    creatorEyebrow: "About the author",
+    creatorPrimaryCta: "About me",
+    creatorSecondaryCta: "Contact me",
     creatorSpotlights: [
       {
-        title: "Jackie / MakerJackie",
+        title: "About me",
         description:
-          "Independent developer, former AI algorithm engineer, founder of Hackathon Weekly, and publisher of AI product experiments and reusable templates.",
-        href: "https://makerjackie.com",
-        cta: "View projects",
+          "Read the author profile, writing principles, and long-term focus of this site.",
+        href: "/about",
+        cta: "Read profile",
         icon: UserRoundIcon,
       },
       {
-        title: "01MVP handbook",
-        description:
-          "A practical guide from idea, MVP, launch, and feedback to the next product iteration.",
-        href: "https://01mvp.com",
-        cta: "Visit 01MVP",
+        title: "Latest writing",
+        description: "Browse recent technical practice, product thinking, and durable notes.",
+        href: "/blog",
+        cta: "Read articles",
         icon: BookOpenIcon,
       },
       {
-        title: "TanStack full-stack template",
-        description:
-          "A TanStack Start full-stack product template for shipping SaaS apps, tools, and AI-built products.",
-        href: "https://01mvp.com/template",
-        cta: "View template",
+        title: "Site docs",
+        description: "See how this personal site is written, published, deployed, and maintained.",
+        href: "/docs",
+        cta: "Read docs",
         icon: RocketIcon,
       },
     ] satisfies CreatorSpotlight[],
-    poweredByLabel: "Powered by",
-    creatorCreditLabel: "Created by",
   };
 }

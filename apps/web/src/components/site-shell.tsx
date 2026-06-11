@@ -42,7 +42,6 @@ export function SiteShell({
   const githubLink = siteSettings.socialLinks.find(isGitHubSocialLink);
   const footerSocialLinks = siteSettings.socialLinks.filter((link) => !isGitHubSocialLink(link));
   const navigation = getMarketingNavigation(siteSettings.navigation, locale);
-  const creatorCreditLabel = locale === "zh" ? "创作者" : "Created by";
   const localizedNavigation = navigation.map((item) => ({
     ...item,
     href: getLocalizedDocsHref(item.href, locale),
@@ -108,18 +107,7 @@ export function SiteShell({
             <p className="text-sm font-semibold">{siteSettings.name}</p>
             <p className="mt-1 text-xs text-muted-foreground">{siteSettings.description}</p>
             <p className="mt-2 text-xs text-muted-foreground">
-              Powered by{" "}
-              <a href="https://01mvp.com" className="font-semibold text-foreground hover:text-link">
-                01mvp.com
-              </a>
-              <span aria-hidden="true"> · </span>
-              {creatorCreditLabel}{" "}
-              <a
-                href="https://makerjackie.com"
-                className="font-semibold text-foreground hover:text-link"
-              >
-                Jackie
-              </a>
+              © {new Date().getFullYear()} {siteSettings.authorName}
             </p>
           </div>
           {footerSocialLinks.length ? (

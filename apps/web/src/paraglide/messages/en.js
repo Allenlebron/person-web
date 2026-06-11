@@ -1269,7 +1269,7 @@ export const back_home = /** @type {(inputs: Back_HomeInputs) => LocalizedString
 };
 
 export const blog_description = /** @type {(inputs: Blog_DescriptionInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`Articles about the 01MVP blog template, Cloudflare-native storage, Markdown publishing, and automation workflows.`)
+	return /** @type {LocalizedString} */ (`Technical practice, product thinking, learning notes, and reusable workflows.`)
 };
 
 export const blog_eyebrow = /** @type {(inputs: Blog_EyebrowInputs) => LocalizedString} */ () => {
@@ -1673,7 +1673,7 @@ export const series_title = /** @type {(inputs: Series_TitleInputs) => Localized
 };
 
 export const site_subtitle = /** @type {(inputs: Site_SubtitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`01MVP Blog Template`)
+	return /** @type {LocalizedString} */ (`Personal Blog`)
 };
 
 export const signup = /** @type {(inputs: SignupInputs) => LocalizedString} */ () => {

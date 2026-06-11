@@ -277,7 +277,7 @@ function AdminSettingsPage() {
         manualEmailBroadcastsEnabled:
           emailStatus.delivery.configured && formData.get("manualEmailBroadcastsEnabled") === "on",
         indexingEnabled: formData.get("indexingEnabled") === "on",
-        layoutPreset: formData.get("layoutPreset"),
+        layoutPreset: siteSettings.layoutPreset,
       }),
     }).catch(() => null);
 
@@ -739,7 +739,7 @@ function AdminSettingsPage() {
                     id="social-links"
                     name="socialLinks"
                     defaultValue={formatLinkLines(siteSettings.socialLinks)}
-                    placeholder="GitHub | https://github.com/01mvp/blog-starter"
+                    placeholder="GitHub | https://github.com/Allenlebron/person-web"
                     rows={4}
                     className={`${adminTextareaClassName} min-h-24`}
                   />
@@ -781,19 +781,6 @@ function AdminSettingsPage() {
                 <option value="apple">{m.theme_preset_apple()}</option>
                 <option value="editorial">{m.theme_preset_claude()}</option>
                 <option value="brutalist">{m.theme_preset_brutalist()}</option>
-              </select>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="layout-preset">{m.admin_settings_layout_preset()}</Label>
-              <select
-                id="layout-preset"
-                name="layoutPreset"
-                defaultValue={siteSettings.layoutPreset}
-                className={adminSelectClassName}
-              >
-                <option value="shelf">{m.layout_preset_shelf()}</option>
-                <option value="developer">{m.layout_preset_developer()}</option>
-                <option value="journal">{m.layout_preset_journal()}</option>
               </select>
             </div>
             <div className="grid content-end gap-2">

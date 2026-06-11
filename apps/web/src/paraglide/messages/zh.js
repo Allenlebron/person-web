@@ -1269,7 +1269,7 @@ export const back_home = /** @type {(inputs: Back_HomeInputs) => LocalizedString
 };
 
 export const blog_description = /** @type {(inputs: Blog_DescriptionInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`关于 01MVP 博客模板、Cloudflare 原生存储、Markdown 发布和自动化工作流的文章。`)
+	return /** @type {LocalizedString} */ (`记录技术实践、产品思考、学习笔记和可复用工作流。`)
 };
 
 export const blog_eyebrow = /** @type {(inputs: Blog_EyebrowInputs) => LocalizedString} */ () => {
@@ -1457,7 +1457,7 @@ export const github_repository = /** @type {(inputs: Github_RepositoryInputs) =>
 };
 
 export const home_bilingual_intro_en = /** @type {(inputs: Home_Bilingual_Intro_EnInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`01mvp-blog-starter is a Cloudflare-native personal publishing system with visual writing, Markdown import, bilingual content, and API automation.`)
+	return /** @type {LocalizedString} */ (`A Cloudflare-native personal publishing system with visual writing, Markdown import, bilingual content, and API automation.`)
 };
 
 export const home_bilingual_intro_zh = /** @type {(inputs: Home_Bilingual_Intro_ZhInputs) => LocalizedString} */ () => {
@@ -1673,7 +1673,7 @@ export const series_title = /** @type {(inputs: Series_TitleInputs) => Localized
 };
 
 export const site_subtitle = /** @type {(inputs: Site_SubtitleInputs) => LocalizedString} */ () => {
-	return /** @type {LocalizedString} */ (`01MVP博客模板`)
+	return /** @type {LocalizedString} */ (`个人博客`)
 };
 
 export const signup = /** @type {(inputs: SignupInputs) => LocalizedString} */ () => {
