@@ -10,6 +10,7 @@ import {
   HomeIcon,
   Loader2Icon,
   SearchIcon,
+  TagIcon,
   UserCircleIcon,
 } from "lucide-react";
 import { useEffect } from "react";
@@ -23,7 +24,6 @@ import {
   useStylePreset,
 } from "#/components/style-preset-switcher";
 import { ThemeToggle } from "#/components/theme-toggle";
-import { getLocalizedDocsHref } from "#/lib/docs-i18n";
 import { getCurrentLocale } from "#/lib/i18n";
 import { m } from "#/paraglide/messages.js";
 
@@ -41,11 +41,7 @@ export function SiteShell({
   const searchLabel = locale === "zh" ? "搜索" : "Search";
   const githubLink = siteSettings.socialLinks.find(isGitHubSocialLink);
   const footerSocialLinks = siteSettings.socialLinks.filter((link) => !isGitHubSocialLink(link));
-  const navigation = getMarketingNavigation(siteSettings.navigation, locale);
-  const localizedNavigation = navigation.map((item) => ({
-    ...item,
-    href: getLocalizedDocsHref(item.href, locale),
-  }));
+  const navigation = getPersonalNavigation(siteSettings.navigation, locale);
 
   usePublicPageViewTracking();
 
@@ -63,7 +59,7 @@ export function SiteShell({
           </Link>
 
           <nav className="hidden items-center gap-6 md:flex">
-            {localizedNavigation.map((item) => (
+            {navigation.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
@@ -131,21 +127,23 @@ export function SiteShell({
 
 type ShellNavigationItem = SiteSettings["navigation"][number];
 
-const defaultMarketingNavigation: ShellNavigationItem[] = [
-  { label: "Demo", href: "/demo", i18n: { label: { zh: "博客 Demo" } } },
-  { label: "Docs", href: "/docs", i18n: { label: { zh: "文档" } } },
+const defaultPersonalNavigation: ShellNavigationItem[] = [
   { label: "Articles", href: "/blog", i18n: { label: { zh: "文章" } } },
+  { label: "Series", href: "/series", i18n: { label: { zh: "专栏" } } },
+  { label: "Tags", href: "/tags", i18n: { label: { zh: "标签" } } },
   { label: "About", href: "/about", i18n: { label: { zh: "关于" } } },
 ];
 
-function getMarketingNavigation(
+function getPersonalNavigation(
   configuredNavigation: ShellNavigationItem[],
   locale: ReturnType<typeof getCurrentLocale>,
 ) {
   const navigation =
-    configuredNavigation.length && !isLegacyStarterNavigation(configuredNavigation)
+    configuredNavigation.length &&
+    !isLegacyStarterNavigation(configuredNavigation) &&
+    !configuredNavigation.some(isStarterOnlyNavigationItem)
       ? configuredNavigation
-      : defaultMarketingNavigation;
+      : defaultPersonalNavigation;
 
   return navigation.map((item) => ({
     ...item,
@@ -162,10 +160,19 @@ function isLegacyStarterNavigation(navigation: ShellNavigationItem[]) {
   );
 }
 
+function isStarterOnlyNavigationItem(item: ShellNavigationItem) {
+  return (
+    item.href === "/demo" ||
+    item.href === "/docs" ||
+    item.href.startsWith("/docs/") ||
+    item.href === "/zh/docs" ||
+    item.href.startsWith("/zh/docs/")
+  );
+}
+
 function MobileTabBar({ locale }: { readonly locale: ReturnType<typeof getCurrentLocale> }) {
   const { user } = useAuth();
   const location = useLocation();
-  const docsHref = getLocalizedDocsHref("/docs", locale);
   const items = [
     {
       href: "/",
@@ -173,19 +180,19 @@ function MobileTabBar({ locale }: { readonly locale: ReturnType<typeof getCurren
       icon: HomeIcon,
     },
     {
-      href: "/demo",
-      label: locale === "zh" ? "Demo" : "Demo",
-      icon: BookOpenIcon,
-    },
-    {
-      href: docsHref,
-      label: locale === "zh" ? "文档" : "Docs",
+      href: "/blog",
+      label: locale === "zh" ? "文章" : "Articles",
       icon: FileTextIcon,
     },
     {
-      href: "/blog",
-      label: locale === "zh" ? "文章" : "Articles",
-      icon: SearchIcon,
+      href: "/series",
+      label: locale === "zh" ? "专栏" : "Series",
+      icon: BookOpenIcon,
+    },
+    {
+      href: "/tags",
+      label: locale === "zh" ? "标签" : "Tags",
+      icon: TagIcon,
     },
     {
       href: user ? "/app" : "/login",

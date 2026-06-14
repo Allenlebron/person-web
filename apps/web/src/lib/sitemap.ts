@@ -1,6 +1,5 @@
 import { cachedGet } from "#/lib/cms-cache";
 import { getD1SiteSettings, listD1Posts, listD1Series, listD1Tags } from "#/lib/cms-d1";
-import { source } from "#/lib/source";
 
 export async function getSitemapPaths() {
   return cachedGet("sitemap:paths", async () => {
@@ -10,20 +9,17 @@ export async function getSitemapPaths() {
       listD1Tags().catch(() => []),
       listD1Series().catch(() => []),
     ]);
-    const docsPaths = source.getPages().map((page) => page.url);
-    const pagePaths = ["", "/demo", "/blog", "/docs", "/series", "/tags", "/about"];
+    const pagePaths = ["", "/blog", "/series", "/tags", "/about"];
     const postPaths = posts.map((post) => `/blog/${post.slug}`);
     const taxonomyPaths = [
       ...series.map((item) => `/series/${item.slug}`),
       ...tags.map((tag) => `/tags/${tag.slug}`),
     ];
 
-    const pageAndDocsPaths = Array.from(new Set([...pagePaths, ...docsPaths]));
-
     return {
       siteUrl: siteSettings.url,
-      allPaths: [...pageAndDocsPaths, ...postPaths, ...taxonomyPaths],
-      pagePaths: pageAndDocsPaths,
+      allPaths: [...pagePaths, ...postPaths, ...taxonomyPaths],
+      pagePaths,
       postPaths,
     };
   });
