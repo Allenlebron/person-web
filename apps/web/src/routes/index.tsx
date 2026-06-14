@@ -67,7 +67,6 @@ function ContentHome({
   const copy = getHomeCopy(locale, siteSettings.authorName);
   const featuredIds = new Set(featuredPosts.map((post) => post.id));
   const latestPosts = posts.filter((post) => !featuredIds.has(post.id)).slice(0, 4);
-  const visibleLatestPosts = latestPosts.length ? latestPosts : posts.slice(0, 4);
 
   return (
     <div className="bg-background">
@@ -121,22 +120,26 @@ function ContentHome({
         </div>
       </section>
 
-      <PostSection
-        eyebrow={copy.featuredEyebrow}
-        title={copy.featuredTitle}
-        description={copy.featuredDescription}
-        posts={featuredPosts}
-        locale={locale}
-      />
+      {featuredPosts.length ? (
+        <PostSection
+          eyebrow={copy.featuredEyebrow}
+          title={copy.featuredTitle}
+          description={copy.featuredDescription}
+          posts={featuredPosts}
+          locale={locale}
+        />
+      ) : null}
 
-      <PostSection
-        eyebrow={copy.latestEyebrow}
-        title={copy.latestTitle}
-        description={copy.latestDescription}
-        posts={visibleLatestPosts}
-        locale={locale}
-        muted
-      />
+      {latestPosts.length || !featuredPosts.length ? (
+        <PostSection
+          eyebrow={copy.latestEyebrow}
+          title={copy.latestTitle}
+          description={copy.latestDescription}
+          posts={latestPosts}
+          locale={locale}
+          muted
+        />
+      ) : null}
 
       <TaxonomySection copy={copy} posts={posts} series={series} tags={tags} />
 
@@ -179,7 +182,7 @@ function PostSection({
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
         <SectionHeading eyebrow={eyebrow} title={title} description={description} />
         {posts.length ? (
-          <div className="mt-8 grid gap-5 lg:grid-cols-2">
+          <div className={`mt-8 grid gap-5 ${posts.length > 1 ? "lg:grid-cols-2" : "max-w-3xl"}`}>
             {posts.map((post, index) => (
               <PostCard key={post.id} post={post} priority={index === 0} locale={locale} />
             ))}
